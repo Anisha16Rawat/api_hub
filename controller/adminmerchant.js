@@ -1648,3 +1648,58 @@ module.exports.kycdetails = async (req, res) => {
   }
 };
 
+module.exports.addFund = async(req, res)=> {
+  try {
+    let {merchant, amount, currency, action, objective, remark} = req.body
+    const date = new Date();
+
+    const sqlSettCurr = "Select wallet from tbl_user where id = ?";
+    const result = await mysqlcon(sqlSettCurr, [merchant]);
+
+    let FinalAddForWallet = action === 'Add' ? result[0].wallet + (Number(amount)) : result[0].wallet - (Number(amount))
+
+    let loginDetails;
+    if(req.user.group_id === 1) {
+      loginDetails = -1
+    } else if(req.user.group_id === 2){
+      if(req.user.role === 1){
+        loginDetails = 1
+      } else if(req.user.role === 2){
+        loginDetails= 2
+      }
+    }
+
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let order_id = '';
+    for (let i = 0; i < 19; i++) {
+      const randomIndex = Math.floor(Math.random() * chars.length);
+      order_id += chars[randomIndex];
+    }
+
+    const insertAddData = {
+      merchant_id: merchant,
+      order_id: order_id,
+      objective: objective,
+      currency: currency,
+      current_wallet : result[0].wallet,
+      update_wallet_tot : FinalAddForWallet,
+      effective_amt: amount,
+      current_action : action === 'Add' ? 1 : 2,
+      remark: remark,
+      created_on : date,
+      login_admin: loginDetails
+    };
+    
+    const sqlForWall = "Update tbl_user SET wallet = ? WHERE id = ?";
+    await mysqlcon(sqlForWall, [FinalAddForWallet, merchant]);
+    const sqlForAddFund = "INSERT INTO tbl_wallet_update_log SET ?";
+    await mysqlcon(sqlForAddFund, [insertAddData]);
+    res.status(200).json({ message: "Fund Added Successfully ✅" });
+    
+  } catch(error){
+    console.log(error)
+    return res.json(500,{
+      message : 'error'
+    });
+  }
+}

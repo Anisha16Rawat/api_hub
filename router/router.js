@@ -48,6 +48,7 @@ myapihubroute.post("/singleClickCheckout",apiController.singleClickCheckout)
 myapihubroute.post("/defaultMT",apiController.defaultMT)
 myapihubroute.post("/uploadDocument",apiController.uploadDocument)
 myapihubroute.post("/kycdetails",apiController.kycdetails)
+myapihubroute.post("addFund",apiController.addFund)
 
 
 
