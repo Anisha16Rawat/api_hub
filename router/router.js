@@ -46,7 +46,8 @@ myapihubroute.post("/loginGamez",apiController.loginGamez)
 myapihubroute.post("/updatePendingsPayout",apiController.updatePendingsPayout)
 myapihubroute.post("/singleClickCheckout",apiController.singleClickCheckout)
 myapihubroute.post("/defaultMT",apiController.defaultMT)
-myapihubroute.post("/KycCallback",apiController.KycCallback)
+myapihubroute.post("/uploadDocument",apiController.uploadDocument)
+myapihubroute.post("/kycdetails",apiController.kycdetails)
 
 
 

@@ -1373,32 +1373,278 @@ module.exports.defaultMT = async function (req, res) {
   }
 };
 
-module.exports.KycCallback = async (req, res) => {
+module.exports.uploadDocument = async (req, res) => {
+  const { id } = req.body;
+  let filterType = req.body.filterType ? Number(req.body.filterType) : 1;
+  req.body.filterType ? Number(req.body.filterType) : 2;
+  req.body.filterType ? Number(req.body.filterType) : 3;
+  req.body.filterType ? Number(req.body.filterType) : 4;
+  req.body.filterType ? Number(req.body.filterType) : "";
+  // console.log(req.body.filterType)
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.USER,
+    to: "anisha16rawat@gmail.com",
+    subject: "Send Attachament",
+    html: "<h1>Hello, This is Attachanment !!</h1><p>This is test mail..!</p>",
+    attachments: [
+      {
+        filename: req.files.image[0].originalname,
+        path: filepath + "/" + req.files.image[0].originalname,
+      },
+      {
+        filename: req.files.image1[0].originalname,
+        path: filepath + "/" + req.files.image1[0].originalname,
+      },
+      {
+        filename: req.files.image2[0].originalname,
+        path: filepath + "/" + req.files.image2[0].originalname,
+      },
+      {
+        filename: req.files.image3[0].originalname,
+        path: filepath + "/" + req.files.image3[0].originalname,
+      },
+    ],
+  };
+
+  var llp = {
+    merchant_id: id,
+    llp_business_identity: req.files.image[0].originalname,
+    llp_business_existence: req.files.image1[0].originalname,
+    llp_business_owners: req.files.image2[0].originalname,
+    llp_business_working: req.files.image3[0].originalname,
+  };
+
+  let prtnr = {
+    merchant_id: id,
+    prtnr_business_identity: req.files.image[0].originalname,
+    prtnr_business_existence: req.files.image1[0].originalname,
+    prtnr_business_working: req.files.image2[0].originalname,
+    prtnr_business_owners: req.files.image3[0].originalname,
+  };
+
+  let sole = {
+    merchant_id: id,
+    sole_business_identity_existence: req.files.image[0].originalname,
+    sole_business_working: req.files.image1[0].originalname,
+    sole_business_owners: req.files.image2[0].originalname,
+    sole_address_owner: req.files.image3[0].originalname,
+  };
+
+  let ngo = {
+    merchant_id: id,
+    ngo_business_identity: req.files.image[0].originalname,
+    ngo_business_existence: req.files.image1[0].originalname,
+    ngo_business_working: req.files.image2[0].originalname,
+    ngo_business_owners: req.files.image3[0].originalname,
+  };
   try {
-    const callbackData = req.body;
-    const responseData = JSON.parse(callbackData.data);
+    let sql = "SELECT kyc_type from tbl_user WHERE id = ?";
+    let result = await mysqlcon(sql, [id]);
+    let test = result[0].kyc_type;
+    if (test !== 0) {
+      if (test === "llp") {
+        let sql =
+          "UPDATE kyc_document SET ?, created_on = now(), modified_on = now() WHERE merchant_id = ?  ";
+        let result = await mysqlcon(sql, [llp, id]);
 
-    const reviewAnswer = responseData.reviewResult.reviewAnswer;
-    const userid = responseData.externalUserId;
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+            res.status(200).json({
+              message: "error",
+            });
+          } else {
+            res.status(200).json({
+              message: "Documents Uploaded",
+            });
+          }
+        });
+      } else if (test === "prtnr") {
+        let sql =
+          "UPDATE kyc_document  SET ?, created_on = now(), modified_on = now() WHERE merchant_id = ?";
+        let result = await mysqlcon(sql, [prtnr, id]);
 
-    if (reviewAnswer == "RED") {
-      const updatestatus = `UPDATE crypto_tbl_user SET kyc_status = 2 ,kyc_response = ? WHERE userId = ${userid}`;
-      await mysqlcon(updatestatus, [responseData]);
-    } else if (reviewAnswer == "GREEN") {
-      const updatestatus = `UPDATE crypto_tbl_user SET kyc_status = 1 ,kyc_response = ? WHERE userId = ${userid}`;
-      await mysqlcon(updatestatus, [responseData]);
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+            res.status(200).json({
+              message: "error",
+            });
+          } else {
+            res.status(200).json({
+              message: "Documents Uploaded",
+            });
+          }
+        });
+      } else if (test === "sole") {
+        let sql =
+          "UPDATE kyc_document  SET ?, created_on = now(), modified_on = now() WHERE merchant_id = ?";
+        let result = await mysqlcon(sql, [sole, id]);
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+            res.status(200).json({
+              message: "error",
+            });
+          } else {
+            res.status(200).json({
+              message: "Documents Uploaded",
+            });
+          }
+        });
+      } else if (test === "ngo") {
+        let sql =
+          "UPDATE kyc_document  SET ?, created_on = now(), modified_on = now() WHERE merchant_id = ?";
+        let result = await mysqlcon(sql, [ngo, id]);
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+            res.status(200).json({
+              message: "error",
+            });
+          } else {
+            res.status(200).json({
+              message: "Documents Uploaded",
+            });
+          }
+        });
+      }
     } else {
-      const updatestatus = `UPDATE crypto_tbl_user SET kyc_status = 0 ,kyc_response = ? WHERE userId = ${userid}`;
-      await mysqlcon(updatestatus, [responseData]);
-    }
+      if (filterType === 1) {
+        let sql =
+          "INSERT INTO kyc_document SET ?, created_on = now(), modified_on = now()";
+        let userSql = "UPDATE tbl_user SET kyc_type = 'llp' WHERE id = ?";
+        let result = await mysqlcon(sql, [llp]);
+        let result1 = await mysqlcon(userSql, [id]);
 
-    return res
-      .status(200)
-      .json({ status: true, message: "KYC status updated." });
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+            res.status(200).json({
+              message: "error",
+            });
+          } else {
+            res.status(200).json({
+              message: "Documents Uploaded",
+              result1,
+            });
+          }
+        });
+      } else if (filterType === 2) {
+        let sql =
+          "INSERT INTO kyc_document  SET ?, created_on = now(), modified_on = now()";
+        let userSql = "UPDATE tbl_user SET kyc_type = 'prtnr' WHERE id = ?";
+        let result = await mysqlcon(sql, [prtnr]);
+        let result1 = await mysqlcon(userSql, [id]);
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+            res.status(200).json({
+              message: "error",
+            });
+          } else {
+            res.status(200).json({
+              message: "Documents Uploaded",
+            });
+          }
+        });
+      } else if (filterType === 3) {
+        let sql =
+          "INSERT INTO kyc_document  SET ?, created_on = now(), modified_on = now()";
+        let userSql = "UPDATE tbl_user SET kyc_type = 'sole' WHERE id = ?";
+        let result = await mysqlcon(sql, [sole]);
+        let result1 = await mysqlcon(userSql, [id]);
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+            res.status(200).json({
+              message: "error",
+            });
+          } else {
+            res.status(200).json({
+              message: "Documents Uploaded",
+            });
+          }
+        });
+      } else if (filterType === 4) {
+        let sql =
+          "INSERT INTO kyc_document  SET ?, created_on = now(), modified_on = now()";
+        let userSql = "UPDATE tbl_user SET kyc_type = 'ngo' WHERE id = ?";
+        let result = await mysqlcon(sql, [ngo]);
+        let result1 = await mysqlcon(userSql, [id]);
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+            res.status(200).json({
+              message: "error",
+            });
+          } else {
+            res.status(200).json({
+              message: "Documents Uploaded",
+            });
+          }
+        });
+      }
+    }
   } catch (error) {
-    console.error("Error handling KYC callback:", error);
-    return res
-      .status(500)
-      .json({ status: false, message: "Failed to process KYC callback." });
+    console.log(error);
+    return res.json(500, {
+      message: "error",
+    });
   }
 };
+
+module.exports.kycdetails = async (req, res) => {
+  try {
+    let user = req.user;
+    let ID;
+    if (user.account_type === 3) {
+      ID = user.parent_id;
+    } else {
+      ID = user.id;
+    }
+    let sql = "SELECT kyc_type from tbl_user WHERE id = ?";
+    let result = await mysqlcon(sql, [ID]);
+    let test = result[0].kyc_type;
+    let sqlResult;
+    let sql1;
+    if (test === "llp") {
+      sql1 =
+        "SELECT id, merchant_id, llp_business_identity AS doc1,llp_business_existence AS doc2,llp_business_owners AS doc3,llp_business_working AS doc4, document_1, document_2, document_3, document_4 FROM kyc_document WHERE merchant_id = ?";
+      sqlResult = await mysqlcon(sql1, [ID]);
+    } else if (test === "prtnr") {
+      sql1 =
+        "SELECT id, merchant_id, prtnr_business_identity AS doc1,prtnr_business_existence AS doc2,prtnr_business_working AS doc3,prtnr_business_owners AS doc4, document_1, document_2, document_3, document_4 FROM kyc_document WHERE merchant_id = ?";
+      sqlResult = await mysqlcon(sql1, [ID]);
+    } else if (test === "sole") {
+      sql1 =
+        "SELECT id, merchant_id, sole_business_identity_existence AS doc1,sole_business_working AS doc2,sole_business_owners AS doc3,sole_address_owner AS doc4, document_1, document_2, document_3, document_4 FROM kyc_document WHERE merchant_id = ?";
+      sqlResult = await mysqlcon(sql1, [ID]);
+    } else if (test === "ngo") {
+      sql1 =
+        "SELECT id, merchant_id, ngo_business_identity AS doc1,ngo_business_existence AS doc2,ngo_business_working AS doc3,ngo_business_owners AS doc4, document_1, document_2, document_3, document_4 FROM kyc_document WHERE merchant_id = ?";
+      sqlResult = await mysqlcon(sql1, [ID]);
+    }
+    res.status(200).json({
+      category: test,
+      finalResult: sqlResult,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong", error });
+  }
+};
+
