@@ -1,7 +1,6 @@
 # 🚀 API Hub
 
-A production-ready collection of RESTful APIs built with **Node.js** and **Express.js**, 
-featuring JWT authentication, role-based access, and clean MVC architecture.
+A production-ready collection of RESTful APIs built with **Node.js** and **Express.js**, featuring JWT authentication, role-based access, and clean MVC architecture.
 
 ---
 
@@ -19,12 +18,23 @@ featuring JWT authentication, role-based access, and clean MVC architecture.
 ---
 
 ## 📁 Project Structure
+
+```
 api_hub/
 ├── config/         # DB and environment config
 ├── controller/     # Business logic
 ├── middleware/     # Auth & error middleware
 ├── router/         # API route definitions
-├── services/       # Reusable service layer## ✨ Features
+├── services/       # Reusable service layer
+├── helper/         # Utility functions
+├── sendemail/      # Email service
+├── views/          # EJS templates
+└── index.js        # App entry point
+```
+
+---
+
+## ✨ Features
 
 - ✅ JWT Authentication with HTTP-only cookies
 - ✅ Full CRUD REST API
@@ -48,7 +58,6 @@ npm install
 
 # Set up environment variables
 cp .env.example .env
-# Edit .env with your DB credentials and JWT secret
 
 # Start the server
 npm start
@@ -57,10 +66,15 @@ npm start
 ---
 
 ## 🔐 Environment Variables
-├── helper/         # Utility functions
-├── sendemail/      # Email service
-├── views/          # EJS templates
-└── index.js        # App entry point
+
+```
+PORT=3000
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=yourpassword
+DB_NAME=api_hub
+JWT_SECRET=your_jwt_secret
+```
 
 ---
 
