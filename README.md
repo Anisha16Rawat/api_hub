@@ -1,50 +1,74 @@
 # 🚀 API Hub
 
-## 📌 Description
-
-API Hub is a collection of scalable, structured RESTful APIs built with Node.js and Express.
-This project demonstrates authentication, CRUD operations, and clean backend architecture.
+A production-ready collection of RESTful APIs built with **Node.js** and **Express.js**, 
+featuring JWT authentication, role-based access, and clean MVC architecture.
 
 ---
 
 ## 🛠 Tech Stack
 
-* Node.js
-* Express.js
-* MySQL
-* JWT Authentication
-* cookie-parser
-
----
-## ✨ Features
-
-* RESTful API Design
-* Full CRUD Operations
-* JWT Authentication
-* Error Handling & Validation
+| Layer | Technology |
+|---|---|
+| Runtime | Node.js |
+| Framework | Express.js |
+| Database | MySQL |
+| Auth | JWT + HTTP-only Cookies |
+| Templating | EJS |
+| Security | bcrypt, input validation |
 
 ---
 
-## 🔐 Security
+## 📁 Project Structure
+api_hub/
+├── config/         # DB and environment config
+├── controller/     # Business logic
+├── middleware/     # Auth & error middleware
+├── router/         # API route definitions
+├── services/       # Reusable service layer## ✨ Features
 
-* Password hashing
-* JWT-based authentication
-* HTTP-only cookies
-* Input validation
+- ✅ JWT Authentication with HTTP-only cookies
+- ✅ Full CRUD REST API
+- ✅ MVC Architecture
+- ✅ Password hashing with bcrypt
+- ✅ Input validation & error handling
+- ✅ Email service integration
+- ✅ Modular, scalable folder structure
 
 ---
 
-## 🚀 Future Improvements
+## ⚙️ Getting Started
 
-* Rate Limiting
-* Logging System
-* API Documentation
-* Unit Testing
+```bash
+# Clone the repo
+git clone https://github.com/Anisha16Rawat/api_hub.git
+cd api_hub
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your DB credentials and JWT secret
+
+# Start the server
+npm start
+```
 
 ---
 
-## 👨‍💻 Author
-Anisha 
+## 🔐 Environment Variables
+├── helper/         # Utility functions
+├── sendemail/      # Email service
+├── views/          # EJS templates
+└── index.js        # App entry point
 
+---
 
-This project is open-source and available under the MIT License.
+## 👩‍💻 Author
+
+**Anisha Rawat** — Backend Developer  
+[LinkedIn](https://linkedin.com/in/anishaaks) • [GitHub](https://github.com/Anisha16Rawat)
+
+---
+
+⭐ If you found this useful, please consider starring the repo!
